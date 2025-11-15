@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIMANTAB</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@9.0.3/dist/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@9.0.3"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cordes-blue': '#1e40af',
+                        'cordes-dark': '#1e293b',
+                        'cordes-light': '#f8fafc',
+                        'cordes-accent': '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 w-64 bg-cordes-dark shadow-xl z-50">
+        <div class="flex items-center justify-center h-16 bg-cordes-blue">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                    <i class="fas fa-cube text-cordes-blue text-lg"></i>
+                </div>
+                <span class="text-white text-xl font-bold">SIMANTAB</span>
+            </div>
+        </div>
+        
+        <nav class="mt-8 px-4">
+            <div class="space-y-2">
+                <a href="/" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors group">
+                    <i class="fas fa-home mr-3 text-cordes-accent group-hover:text-white"></i>
+                    Dashboard
+                </a>
+                <a href="/pengusaha" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors group">
+                    <i class="fas fa-users mr-3 text-gray-400 group-hover:text-white"></i>
+                    Daftar Pengusaha
+                </a>
+                <a href="/data" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors group">
+                    <i class="fas fa-users mr-3 text-gray-400 group-hover:text-white"></i>
+                    Data Transaksi
+                </a>
+                <a href="/wilaya" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors group">
+                    <i class="fas fa-chart-bar mr-3 text-gray-400 group-hover:text-white"></i>
+                    Perwilaya
+                </a>
+                <a href="/denda" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors group">
+                    <i class="fas fa-chart-bar mr-3 text-gray-400 group-hover:text-white"></i>
+                    Denda
+                </a>                
+                <form method="post" action="/logout/" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors group">
+                    {% csrf_token %}
+                    <button type="submit" class="flex items-center w-full">
+                        <i class="fas fa-chart-bar mr-3 text-gray-400 group-hover:text-white"></i>
+                        Logout
+                    </button>
+                </form>
+
+            </div>
+        </nav>
+        
+        <div class="absolute bottom-4 left-4 right-4">
+            <div class="bg-gray-800 rounded-lg p-4">
+                <div class="flex items-center space-x-3">
+                    <img src="https://cdn-icons-png.flaticon.com/512/17003/17003310.png" alt="Admin" class="w-10 h-10 rounded-full">
+                    <div>
+                        <p class="text-white text-sm font-medium">{{ user.username }}</p>
+                        <p class="text-gray-400 text-xs">Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-64">
+        <!-- Top Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">SISTEM MONITORING PAJAK</h1>
+                        <p class="text-gray-600 text-sm mt-1">Terintegrasi dan Akuntabel</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cordes-accent focus:border-transparent outline-none">
+                        </div>
+                        <div class="relative">
+                            <button class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Content -->
+        <main class="p-6">
+            {% block content %}
+            {% endblock %} 
+        </main>
+    </div>
+    {% block scripts %}
+    {% endblock %} 
+    <script> 
+        // Add some interactive functionality
+
+        function createTabelForm(containerId, tableId, titleText, subtitleText, excelFileName, pdfFileName) {
+            const container = document.createElement('div');
+            container.className = 'w-full max-w-6xl mx-auto bg-white rounded-lg shadow-md overflow-hidden border border-gray-200';
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'flex justify-between bg-indigo-600 text-white px-6 py-4';
+
+            const leftHeader = document.createElement('div');
+            const title = document.createElement('h2');
+            title.className = 'text-xl font-bold';
+            title.textContent = titleText;
+
+            const subtitle = document.createElement('p');
+            subtitle.className = 'text-sm text-indigo-100';
+            subtitle.textContent = subtitleText;
+
+            leftHeader.appendChild(title);
+            leftHeader.appendChild(subtitle);
+
+            const rightHeader = document.createElement('div');
+
+            const excelButton = document.createElement('button');
+            excelButton.className = 'bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm shadow';
+            excelButton.textContent = 'Excel';
+            excelButton.setAttribute('onclick', `exportExcel('${tableId}', '${excelFileName}')`);
+
+            const pdfButton = document.createElement('button');
+            pdfButton.className = 'bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm shadow';
+            pdfButton.textContent = 'PDF';
+            pdfButton.setAttribute('onclick', `exportPDF('${tableId}', '${pdfFileName}')`);
+
+            rightHeader.appendChild(excelButton);
+            rightHeader.appendChild(pdfButton);
+
+            header.appendChild(leftHeader);
+            header.appendChild(rightHeader);
+
+            // Table
+            const table = document.createElement('table');
+            table.id = tableId;
+            table.className = 'min-w-full table-auto border border-gray-300 rounded-lg shadow text-sm';
+
+            // Assemble
+            container.appendChild(header);
+            container.appendChild(table);
+
+            // Append to target container
+            const target = document.getElementById(containerId);
+            if (target) {
+                target.appendChild(container);
+            } else {
+                console.warn(`Container with ID "${containerId}" not found.`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkData();
+            
+            const navLinks = document.querySelectorAll("nav a");
+            const currentPath = window.location.pathname;
+
+            // Tandai link aktif berdasarkan URL
+            navLinks.forEach(link => {
+            const href = link.getAttribute("href");
+            if (href === currentPath) {
+                link.classList.add("bg-gray-700", "text-white");
+                link.classList.remove("text-gray-300");
+                const icon = link.querySelector("i");
+                if (icon) icon.classList.add("text-white");
+            }
+
+            // Tambahkan interaksi klik manual
+            link.addEventListener("click", function () {
+                navLinks.forEach(l => {
+                l.classList.remove("bg-gray-700", "text-white");
+                l.classList.add("text-gray-300");
+                const icon = l.querySelector("i");
+                if (icon) icon.classList.remove("text-white");
+                });
+
+                this.classList.add("bg-gray-700", "text-white");
+                this.classList.remove("text-gray-300");
+                const icon = this.querySelector("i");
+                if (icon) icon.classList.add("text-white");
+            });
+            });
+
+            // Animasi notifikasi bell
+            const bellIcon = document.querySelector(".fa-bell");
+            if (bellIcon) {
+            setInterval(() => {
+                bellIcon.classList.add("animate-pulse");
+                setTimeout(() => {
+                bellIcon.classList.remove("animate-pulse");
+                }, 1000);
+            }, 5000);
+            }
+
+            // Efek hover untuk kartu statistik
+            const statsCards = document.querySelectorAll(".hover\\:shadow-md");
+            statsCards.forEach(card => {
+            card.addEventListener("mouseenter", function () {
+                this.style.transform = "translateY(-2px)";
+            });
+            card.addEventListener("mouseleave", function () {
+                this.style.transform = "translateY(0)";
+            });
+            });
+
+
+        });
+        function checkData() {
+            fetch(window.location.origin + "/proxy/simtax/data/", {
+                method: "get",
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (typeof data.error === "string" && data.error=='Not logged in') {
+                    checkData();
+                }
+                console.log(data);
+                
+            })
+            .catch(err => {
+                console.error("Fetch error:", err);
+            });
+        }
+
+        function exportExcel(tableId, filename) {
+            const table = document.getElementById(tableId);
+            const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+            XLSX.writeFile(wb, filename);
+        }
+
+        // Ekspor PDF
+        function exportPDF(tableId, filename) {
+            const element = document.getElementById(tableId);
+            html2pdf().from(element).set({ filename: filename }).save();
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends 'baseDashboard.html' %}
+{% block content %}
+    <div id="form-wrapper"></div>
+{% endblock %}
+{% block scripts %}
+<script>
+
+  document.addEventListener("DOMContentLoaded", function () {  
+        const data = JSON.parse('{{ data|escapejs }}');
+        createTabelForm(
+            'form-wrapper',
+            'search-table',
+            'Data PAD / Wilaya',
+            'Informasi Sumber PAD (Makanan dan/atau Minuman)',
+            'padWilaya.xlsx',
+            'padWilaya.pdf'
+        );
+        _tabel(data);
+  }); 
+ 
+
+  function _tabel(dt) {
+    const total = dt.reduce((sum, v) => sum + v.total_pajak, 0);
+    console.log(total);
+    
+    const tableHTML = `
+        <thead class="bg-indigo-600 text-white">
+        <tr>
+            <th class="px-4 py-2">No</th>
+            <th class="px-4 py-2">Kecamatan</th>
+            <th class="px-4 py-2">Pajak</th>
+        </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+        ${dt.map((v, i) => `
+            <tr>
+            <td class="px-4 py-2">${i + 1}</td>
+            <td class="px-4 py-2">${v.periode || '-'}</td>
+            <td class="px-4 py-2">${v.total_pajak?.toLocaleString() || '-'}</td>
+            </tr>
+        `).join("")}
+        </tbody>
+    `;
+
+    setTimeout(() => {
+        const table = document.getElementById("search-table");
+        table.innerHTML = tableHTML;
+
+        setTimeout(() => {
+            new simpleDatatables.DataTable("#search-table", {
+            searchable: true,
+            fixedHeight: true,
+            perPage: 10,
+            });
+        }, 100); 
+    }, 100);
+
+    
+    
+  }
+
+</script>
+{% endblock %} 

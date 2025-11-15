@@ -1,0 +1,25 @@
+{% extends 'baseDashboard.html' %}
+{% block content %}
+  <h1 class="text-2xl font-bold mb-6">Selamat datang, {{ user.username }}</h1>
+  
+
+  <button onclick="myFunction()">Klik Saya</button>
+
+
+{% endblock %}
+{% block scripts %}
+<script>
+  function myFunction() {
+    const formData = new FormData();
+    formData.append("username", "197210172007011014");
+    formData.append("password", "12131415");
+
+    fetch("http://localhost:8000/proxy/simtax/data/", {
+      method: "POST",
+      body: formData
+    })
+      .then(res => res.text())
+      .then(data => console.log(data));
+  }
+</script>
+{% endblock %} 

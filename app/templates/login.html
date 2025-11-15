@@ -1,0 +1,115 @@
+<!-- <h2>Login</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Masuk</button>
+</form> --> 
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Pajak Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-indigo-600">SIMANTAB</h1>
+      <nav>
+        <!-- <ul class="flex space-x-4 text-sm">
+          <li><a href="#" class="hover:text-indigo-600">Beranda</a></li>
+          <li><a href="#" class="hover:text-indigo-600">Tentang</a></li>
+          <li><a href="#" class="hover:text-indigo-600">Kontak</a></li>
+        </ul> -->
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="container m-auto py-4">
+    <div class="grid   grid-cols-12 overflow-hidden bg-[#422ED0]">
+        {% load static %}
+      <div class="element z-3 col-span-7 flex p-32 text-white"  style="background-image: url('{% static 'images/del.jpg' %}');">
+        
+        <div class="w-full min-w-sm flex flex-col justify-between " >
+        </div>
+      </div>
+
+      <!-- Right Section -->
+      <div class="relative z-3 col-span-5 flex rounded-tl-[44px] bg-white">
+        <div class="absolute top-4 right-0 -left-4 z-2 h-full w-full rounded-tl-[44px] bg-white/50"></div>
+        {% load form_filters %}
+        <div class="z-10 w-full">
+            <div class="z-4 mx-auto mt-20 max-w-sm bg-white p-4 sm:p-10 lg:max-w-lg xl:max-w-xl">
+            <h2 class="mb-10 text-4xl font-bold text-slate-600">Hi, Welcome! 👋</h2>
+
+            {% if form.errors %}
+                <div class="mb-6 bg-red-100 text-red-700 p-3 rounded">
+                Username atau password salah.
+                </div>
+            {% endif %}
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Username -->
+                <div>
+                {{ form.username.label_tag }}
+                {{ form.username|add_class:"w-full border-b border-gray-300 px-4 py-5 text-lg font-medium text-slate-700 focus:ring-2 focus:ring-indigo-400 focus:outline-none" }}
+                </div>
+
+                <!-- Password -->
+                <div>
+                {{ form.password.label_tag }}
+                {{ form.password|add_class:"w-full border-b border-gray-300 px-4 py-5 text-lg font-medium text-slate-700 focus:ring-2 focus:ring-indigo-400 focus:outline-none" }}
+                </div>
+
+                <!-- Remember Me & Forgot -->
+                <div class="flex items-center justify-between">
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="form-checkbox text-indigo-600" checked />
+                    <span class="font-medium text-gray-600">Remember me</span>
+                </label>
+                <a href="#" class="text-lg font-medium text-indigo-600 hover:underline">Forgot password?</a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit"
+                class="w-full transform-gpu rounded-full bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-4 font-bold text-white transition-transform hover:-translate-y-1 hover:shadow-lg">
+                Masuk
+                </button>
+            </form>
+
+            <!-- OR -->
+            <!-- <div class="my-6 flex items-center justify-center">
+                <span class="w-1/5 border-b border-gray-300 lg:w-1/4"></span>
+                <span class="mx-2 text-xs text-gray-400">OR</span>
+                <span class="w-1/5 border-b border-gray-300 lg:w-1/4"></span>
+            </div> -->
+
+             
+
+            <!-- Sign Up -->
+            <p class="mt-12 text-center text-sm text-gray-500">
+                Don’t have an account? <a href="#" class="text-indigo-600 hover:underline">Sign up</a>
+            </p>
+            </div>
+
+      </div>
+    </div>
+  </section>
+
+ 
+    
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 py-6 text-center text-sm text-gray-500">
+    &copy; 2025 SIMANTAB. Semua hak dilindungi.
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+{% extends 'baseDashboard.html' %}
+{% block content %}
+    <div id="form-wrapper"></div>
+{% endblock %}
+{% block scripts %}
+<script>
+ 
+  document.addEventListener("DOMContentLoaded", function () {  
+        createTabelForm(
+            'form-wrapper',
+            'search-table',
+            'Data Transaksi',
+            'Informasi Transaksi PAD (Makanan dan/atau Minuman)',
+            'dataPengusaha.xlsx',
+            'dataPengusaha.pdf'
+        );
+      fetch(window.location.origin + "/api/transaksipajak/", {
+          method: "get",
+      })
+      .then(res => res.json())
+      .then(data => {
+          
+        _tabel(data);
+      })
+      .catch(err => {
+          console.error("Fetch error:", err);
+      }); 
+  }); 
+ 
+
+  function _tabel(dt) { 
+    console.log(dt);
+    const tableHTML = `
+        <thead class="bg-indigo-600 text-white">
+        <tr>
+            <th class="px-4 py-2">No</th>
+            <th class="px-4 py-2">Tanggal Pembayaran</th>
+            <th class="px-4 py-2">Wajib Pajak</th>
+            <th class="px-4 py-2">Obyek Pajak</th>
+            <th class="px-4 py-2">Masa Pajak</th>
+            <th class="px-4 py-2">Nilai</th>
+            <th class="px-4 py-2">Action</th>
+        </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+        ${dt.map((v, i) => `
+            <tr>
+            <td class="px-4 py-2">${i + 1}</td>
+            <td class="px-4 py-2">${v.tgl_bayar || '-'}</td>
+            <td class="px-4 py-2">${v.pengguna_nama || '-'}</td>
+            <td class="px-4 py-2">${v.objek_nama || '-'}</td>
+            <td class="px-4 py-2">
+                ${v.bulan_huruf || ''} ${v.transaksi_periodepajak || ''}
+                <br/><small>${v.tglbayar1 || ''}</small>
+            </td>
+            <td class="px-4 py-2">${v.transaksi_jmlhbayardenda || 0}</td>
+            <td class="px-4 py-2"><button class="text-indigo-600 hover:underline">Detail</button></td>
+            </tr>
+        `).join("")}
+        </tbody>
+    `;
+
+    setTimeout(() => {
+         const table = document.getElementById("search-table");
+        table.innerHTML = tableHTML;
+
+        setTimeout(() => {
+            new simpleDatatables.DataTable("#search-table", {
+            searchable: true,
+            fixedHeight: true,
+            perPage: 10,
+            });
+        }, 100); 
+    }, 100);
+
+    
+    
+  }
+
+</script>
+{% endblock %} 

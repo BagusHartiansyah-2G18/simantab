@@ -1,0 +1,67 @@
+{% extends 'baseDashboard.html' %}
+{% block content %}
+    <div id="form-wrapper"></div>
+{% endblock %}
+{% block scripts %}
+<script>
+
+  document.addEventListener("DOMContentLoaded", function () {  
+        const data = JSON.parse('{{ data|escapejs }}');
+        createTabelForm(
+            'form-wrapper',
+            'search-table',
+            'Data Pengusaha Berdenda',
+            'Informasi Jumlah Transaksi Berdenda',
+            'dendaPengusaha.xlsx',
+            'dendaPengusaha.pdf'
+        );
+        _tabel(data);
+  }); 
+ 
+
+  function _tabel(dt) {
+    const total = dt.reduce((sum, v) => sum + v.transaksi_jmlhbayardenda, 0);
+    console.log(total);
+    
+    const tableHTML = `
+        <thead class="bg-indigo-600 text-white">
+        <tr>
+            <th class="px-4 py-2">No</th>
+            <th class="px-4 py-2">A.N</th>
+            <th class="px-4 py-2">Nama Usaha</th>
+            <th class="px-4 py-2">Alamat</th>
+            <th class="px-4 py-2">Berdenda</th>
+        </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+        ${dt.map((v, i) => `
+            <tr>
+            <td class="px-4 py-2">${i + 1}</td>
+            <td class="px-4 py-2">${v.pengguna_nama|| '-'}</td>
+            <td class="px-4 py-2">${v.objek_nama|| '-'}</td>
+            <td class="px-4 py-2">${v.objek_alamat|| '-'}</td>
+            <td class="px-4 py-2">${v.transaksi_jmlhbayardenda?.toLocaleString() || '-'} Transaksi</td>
+            </tr>
+        `).join("")}
+        </tbody>
+    `;
+
+    setTimeout(() => {
+        const table = document.getElementById("search-table");
+        table.innerHTML = tableHTML;
+
+        setTimeout(() => {
+            new simpleDatatables.DataTable("#search-table", {
+            searchable: true,
+            fixedHeight: true,
+            perPage: 10,
+            });
+        }, 100); 
+    }, 100);
+
+    
+    
+  }
+
+</script>
+{% endblock %} 

@@ -1,0 +1,90 @@
+{% extends 'baseDashboard.html' %}
+{% block content %}
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card-header {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+
+    .card-content {
+      overflow-x: auto;
+    }
+  </style>
+
+
+  <h1 class="text-2xl font-bold mb-6">Selamat datang, {{ user.username }}</h1>
+  <div class="grid grid-cols-3 gap-6">
+    <div class="bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-semibold">Total Belanja</h2>
+      <p class="text-xl font-bold text-indigo-600">{{ total_omzet }}</p>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-semibold">Total Pajak</h2>
+      <p class="text-xl text-gray-700">{{ total_pajak }}</p>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-semibold">Total Pengusaha</h2>
+      <p class="text-xl text-gray-700">{{ tobjek }}</p>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-semibold">Total Transaksi</h2>
+      <p class="text-xl text-gray-700">{{ ttransaksi}}</p>
+    </div>
+    
+    
+    <div class="bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-semibold">Terakhir Update</h2>
+      <p class="text-sm text-gray-500">{{tgl}}</p>
+    </div>
+  </div>
+  <hr class="my-4 border-t border-gray-300" />
+  <!-- <div>{{ chart|safe }}</div> -->
+
+  <!-- <img src="data:image/png;base64,{{ chart }}" alt="Grafik Pajak"> -->
+
+  <div class="grid-container">
+  <div class="card">
+    <div class="card-header">{{ config_pajak.judul }}</div>
+    <div class="card-content">{{ chart_pajak|safe }}</div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">{{ config_denda.judul }}</div>
+    <div class="card-content">{{ chart_denda|safe }}</div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">{{ configKec.judul }}</div>
+    <div class="card-content">{{ grafik_kec|safe }}</div>
+  </div>
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+<script>
+ </script>
+{% endblock %} 
