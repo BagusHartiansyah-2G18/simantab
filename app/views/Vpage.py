@@ -3,8 +3,7 @@ from app.models import TransaksiPajak
 from django.contrib.auth.decorators import login_required
 
 import pandas as pd
-import matplotlib.pyplot as plt
-import io
+
 import urllib, base64
 import plotly.graph_objects as go
 import plotly.express as px
