@@ -58,7 +58,7 @@
                 </a>
                 <a href="/wilaya" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors group">
                     <i class="fas fa-chart-bar mr-3 text-gray-400 group-hover:text-white"></i>
-                    Perwilaya
+                    wilayah
                 </a>
                 <a href="/denda" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors group">
                     <i class="fas fa-chart-bar mr-3 text-gray-400 group-hover:text-white"></i>
@@ -95,7 +95,7 @@
             <div class="px-6 py-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-semibold text-gray-900">SISTEM MONITORING PAJAK</h1>
+                        <h1 class="text-2xl font-semibold text-gray-900">SISTEM MONITORING PAJAK MAKAN / MINUM</h1>
                         <p class="text-gray-600 text-sm mt-1">Terintegrasi dan Akuntabel</p>
                     </div>
                     <div class="flex items-center space-x-4">
@@ -119,6 +119,48 @@
             {% block content %}
             {% endblock %} 
         </main>
+
+        <div id="modal"
+            class="fixed inset-0 z-50 hidden"
+            aria-hidden="true"
+            role="dialog"
+            aria-modal="true">
+
+            <!-- Overlay -->
+            <div id="modalOverlay" class="absolute inset-0 bg-black/50"></div>
+
+            <!-- Panel -->
+            <div class="relative mx-auto w-full max-w-lg p-6">
+            <div class="rounded-lg bg-white shadow-xl">
+                <!-- Header -->
+                <div class="flex items-center justify-between border-b p-4">
+                <h2 class="text-lg font-semibold" id="modalJudul">Judul Modal</h2>
+                <button id="closeModalBtn"
+                        class="rounded p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                        aria-label="Tutup">
+                    ✕
+                </button>
+                </div>
+
+                <!-- Body -->
+                <div class="p-4 space-y-3" id="modalContent"> 
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-end gap-2 border-t p-4">
+                    <button id="cancelBtn"
+                            class="rounded px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        close
+                    </button>
+                    <button id="idOnmodel" class="rounded px-4 py-2 bg-green-600 text-white hover:bg-green-700">
+                        Simpan
+                    </button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        
     </div>
     {% block scripts %}
     {% endblock %} 
@@ -264,6 +306,106 @@
         function exportPDF(tableId, filename) {
             const element = document.getElementById(tableId);
             html2pdf().from(element).set({ filename: filename }).save();
+        }
+
+
+        // modal 
+        const modal = document.getElementById('modal');
+        const overlay = document.getElementById('modalOverlay');
+        const openBtn = document.getElementById('openModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const idOnmodel = document.getElementById('idOnmodel');
+        idOnmodel.disabled = true;
+        const modalContent = document.getElementById('modalContent');
+        const modalJudul = document.getElementById('modalJudul');
+
+
+        function runModal({judul="Judul Form",content="Ini Form", on=true, btn={}}) {
+            modalJudul.innerHTML=judul;
+            modalContent.innerHTML=content;
+            if(Object.keys(btn).length!=0){
+                // {judul,function}
+                idOnmodel.disabled = false;
+                if(btn.judul!=undefined){
+                    idOnmodel.innerHTML = btn.judul;
+                }
+                idOnmodel.addEventListener('click', btn.function);
+            }
+            if(on){
+                openModal();
+            }
+        }
+
+        // Helper: buka/tutup modal
+        function openModal() {
+            modal.classList.remove('hidden');
+            modal.setAttribute('aria-hidden', 'false');
+            // optional: fokus ke tombol tutup untuk aksesibilitas
+            setTimeout(() => closeBtn.focus(), 0);
+            // disable scroll body
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            // re-enable scroll
+            document.body.classList.remove('overflow-hidden');
+            // kembalikan fokus ke trigger
+            openBtn.focus();
+        }
+
+        // Event: buka/tutup
+        // openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        // Klik di overlay menutup modal
+        overlay.addEventListener('click', closeModal);
+
+        // ESC menutup modal
+        document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+        });
+
+        // Optional: cegah klik dalam panel menutup modal saat bubbling
+        const panel = modal.querySelector('.rounded-lg.bg-white');
+        panel.addEventListener('click', (e) => e.stopPropagation());
+
+
+        let _={};
+
+
+        const bulanIndo = [
+            "Januari","Februari","Maret","April","Mei","Juni",
+            "Juli","Agustus","September","Oktober","November","Desember"
+        ];
+
+        // cek validitas tanggal
+        function isValidDate(dateStr) {
+            const d = new Date(dateStr);
+            return !isNaN(d.getTime()) && dateStr === d.toISOString().slice(0,10);
+        }
+
+        // format tanggal tunggal
+        function formatDate(dateStr) {
+            if (!isValidDate(dateStr)) return null;
+            const d = new Date(dateStr);
+            const day = String(d.getDate()).padStart(2,"0");
+            const month = bulanIndo[d.getMonth()];
+            const year = d.getFullYear();
+            return `${day} ${month} ${year}`;
+        }
+
+        // format rentang
+        function formatRange(startDate, endDate) {
+            const startFmt = formatDate(startDate);
+            const endFmt = formatDate(endDate);
+            if (!startFmt || !endFmt) return "Tanggal tidak valid";
+            return `${startFmt} - ${endFmt}`;
         }
 
     </script>

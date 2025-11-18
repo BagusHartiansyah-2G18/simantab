@@ -4,32 +4,31 @@
 {% endblock %}
 {% block scripts %}
 <script>
- 
-  document.addEventListener("DOMContentLoaded", function () {  
-        createTabelForm(
-            'form-wrapper',
-            'search-table',
-            'Data Transaksi',
-            'Informasi Transaksi PAD (Makanan dan/atau Minuman)',
-            'dataPengusaha.xlsx',
-            'dataPengusaha.pdf'
-        );
-      fetch(window.location.origin + "/api/transaksipajak/", {
-          method: "get",
-      })
-      .then(res => res.json())
-      .then(data => {
-          
-        _tabel(data);
-      })
-      .catch(err => {
-          console.error("Fetch error:", err);
-      }); 
-  }); 
+    
+    document.addEventListener("DOMContentLoaded", function () {  
+            createTabelForm(
+                'form-wrapper',
+                'search-table',
+                'Data Transaksi',
+                'Informasi Transaksi PAD (Makanan dan/atau Minuman)',
+                'dataPengusaha.xlsx',
+                'dataPengusaha.pdf'
+            );
+        fetch(window.location.origin + "/api/transaksipajak/", {
+            method: "get",
+        })
+        .then(res => res.json())
+        .then(data => {
+            _ = data;
+            _tabel(data);
+        })
+        .catch(err => {
+            console.error("Fetch error:", err);
+        }); 
+    }); 
  
 
-  function _tabel(dt) { 
-    console.log(dt);
+  function _tabel(dt) {  
     const tableHTML = `
         <thead class="bg-indigo-600 text-white">
         <tr>
@@ -51,10 +50,10 @@
             <td class="px-4 py-2">${v.objek_nama || '-'}</td>
             <td class="px-4 py-2">
                 ${v.bulan_huruf || ''} ${v.transaksi_periodepajak || ''}
-                <br/><small>${v.tglbayar1 || ''}</small>
             </td>
             <td class="px-4 py-2">${v.transaksi_jmlhbayardenda || 0}</td>
-            <td class="px-4 py-2"><button class="text-indigo-600 hover:underline">Detail</button></td>
+            <td class="px-4 py-2">
+                <button class="text-indigo-600 hover:underline" onclick="modalInfo(${i})">Detail</button></td>
             </tr>
         `).join("")}
         </tbody>
@@ -76,6 +75,32 @@
     
     
   }
+  function modalInfo(ind) {
+        console.log(_[ind]);4
+        
+        runModal({
+            judul:"Informasi",
+            btn:{},
+            content:`
+                 <div class="h-440 overflow-y-scroll rounded-lg border border-gray-300 bg-white shadow">
+                    <ul class="divide-y divide-gray-200">
+                    <li class="p-3 hover:bg-blue-50 cursor-pointer">
+                        <b style="display:block">Masa Transaksi</b>
+                        ${formatRange(_[ind].transaksi_masaawal ,_[ind].transaksi_masaakhir)}
+                    </li>
+                    <li class="p-3 hover:bg-blue-50 cursor-pointer">
+                        <b style="display:block">Denda</b>
+                        ${transaksi_jmlhbayardenda}
+                        
+                    </li>
+                    </ul>
+                </div>
+
+            `, 
+            
+        }) 
+    }
+    
 
 </script>
 {% endblock %} 
