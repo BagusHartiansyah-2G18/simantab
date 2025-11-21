@@ -17,10 +17,11 @@ from app.views.sf.SFdata import Dtransaksi,dataFrameToJson
 # mobil_saya = Mobil("Toyota", "Merah")
 # mobil_saya.info()  # 
 
-_ = Dtransaksi()
+
 
 @login_required
 def dashboard(request): 
+    _ = Dtransaksi()
     datax = _.daftarPajakPerbulan()
     config_pajak = {
         'kolom1': 'pajak',
@@ -74,6 +75,7 @@ def dashboard(request):
 
 @login_required
 def user(request):
+    _ = Dtransaksi()
     data = TransaksiPajak.objects.all()
     total_pajak = sum([d.pajak for d in data])
     total_omzet = sum([d.omzet_makanan + d.omzet_minuman for d in data])
@@ -87,6 +89,7 @@ def user(request):
 
 @login_required
 def data(request):
+    _ = Dtransaksi()
     context = {
         # 'data': data,
     }
@@ -94,6 +97,7 @@ def data(request):
 
 @login_required
 def pengusaha(request):
+    _ = Dtransaksi()
     data = dataFrameToJson(_.pengusaha())
     context = {
         'data': data,
@@ -102,6 +106,7 @@ def pengusaha(request):
 
 @login_required
 def wilaya(request):
+    _ = Dtransaksi()
     data = dataFrameToJson(_.groupBykecamatan())
     context = {
         'data': data,
@@ -110,6 +115,7 @@ def wilaya(request):
 
 @login_required
 def denda(request):
+    _ = Dtransaksi()
     data = dataFrameToJson(_.pengusahaBerdenda())
     context = {
         'data': data,

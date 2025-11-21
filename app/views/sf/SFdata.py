@@ -15,7 +15,8 @@ NORMALISASI_KECAMATAN = {
     "jereweh": ["jereweh", "jeroeh", "jreweh", "jerewe", "jerweh"],
     "maluk": ["maluk", "meluk", "malok", "maluak"],
     "seteluk": ["seteluk", "steluk", "sateluk", "setlk"],
-    "poto tano": ["poto tano", "pototano", "poto-tano", "poto tanno", "pt tano"]
+    "poto tano": ["poto tano", "pototano", "poto-tano", "poto tanno", "pt tano"],
+    "sekongkang": ["sekongkang"]
 }
 
 MAP_EJAAN = {}
@@ -48,26 +49,45 @@ def dataFrameToJson(df):
 class Dtransaksi:
     def __init__(self):
         data = TransaksiPajak.objects.all()
-        df = pd.DataFrame({'data': data}) 
-        df['data_dict'] = df['data'].apply(lambda x: x.__dict__ if x is not None else {})
-        self.dt = pd.json_normalize(df['data_dict'])
-        self.dt['tgl_bayar'] = pd.to_datetime(self.dt['tgl_bayar'], errors='coerce')
-        self.dt['periode'] = self.dt['tgl_bayar'].dt.to_period('M')
+        if not data.exists():
+            self.dt = pd.DataFrame()  # atau bisa set ke None, tergantung kebutuhan
+        else:
+            df = pd.DataFrame({'data': data}) 
+            df['data_dict'] = df['data'].apply(lambda x: x.__dict__ if x is not None else {})
+            self.dt = pd.json_normalize(df['data_dict'])
+            self.dt['tgl_bayar'] = pd.to_datetime(self.dt['tgl_bayar'], errors='coerce') 
+            self.dt['periode'] = self.dt['tgl_bayar'].dt.to_period('M')
         
     def periode(self):
         return self.dt['periode'].drop_duplicates()
+    def jenisPAD(self):
+        return (
+            self.dt.groupby('subjenispajak_id').agg({
+                'transaksi_jmlhbayardenda': 'sum',
+                'objek_nama': 'first',
+                'objek_alamat': 'first',
+                'pengguna_nama':'first',
+                'subjenispajak_nama':'first'
+            }).reset_index()
+            .rename(columns={'transaksi_jmlhbayardenda': 'pajak','subjenispajak_nama':'jenis'})
+        )
     def filterByPeriode(periode):
         # '2025-10'
         return self.dt[self.dt['periode'] == periode]
 
     def pengusaha(self):
         # return self.dt.groupby('objek_id')['pajak'].sum().reset_index()
-        return self.dt.groupby('objek_id').agg({
-            'pajak': 'sum',
-            'objek_nama': 'first',
-            'objek_alamat': 'first',
-            'pengguna_nama':'first',
-        }).reset_index()
+        return (
+            self.dt.groupby('objek_id').agg({
+                'transaksi_jmlhbayardenda': 'sum',
+                'objek_nama': 'first',
+                'objek_alamat': 'first',
+                'pengguna_nama':'first',
+                'subjenispajak_nama':'first'
+            })
+            .reset_index()
+            .rename(columns={'transaksi_jmlhbayardenda': 'pajak'})
+        )
 
         # grouped = self.dt.groupby('objek_id')['pajak'].sum().reset_index()
         # objek_info = self.dt[['objek_id']].drop_duplicates()
@@ -75,13 +95,18 @@ class Dtransaksi:
         
     def pengusahaBerdenda(self):
         # peruser = self.dt.groupby('objek_id')['berdenda'].sum().reset_index()
-        peruser = self.dt.groupby('objek_id').agg({
-            'transaksi_jmlhbayardenda': 'count',
-            'objek_nama': 'first',
-            'objek_alamat': 'first',
-            'pengguna_nama':'first',
-        }).reset_index()
-        return peruser[peruser['transaksi_jmlhbayardenda'] > 0]
+        return (
+            self.dt[self.dt['transaksi_jmlhdendapembayaran'] > 0]
+            .groupby('objek_id')
+            .agg({
+                'transaksi_jmlhdendapembayaran': 'count',
+                'objek_nama': 'first',
+                'objek_alamat': 'first',
+                'pengguna_nama': 'first',
+            })
+            .reset_index()
+            .rename(columns={'transaksi_jmlhdendapembayaran': 'transaksi_jmlhbayardenda'})
+        )
     
     def totalPajak(self):
         return self.dt['pajak'].sum()
@@ -119,7 +144,16 @@ class Dtransaksi:
     def groupBykecamatan(self):
         hasil = defaultdict(lambda: {"total_objek": 0, "total_pajak": 0,"data": []})
 
-        for _, item in self.dt.iterrows():
+        data = (
+            self.dt.groupby('objek_id').agg({
+                'transaksi_jmlhbayardenda': 'sum',
+                'id': 'count',
+                'objek_alamat':'first'
+            }).reset_index()
+            .rename(columns={'transaksi_jmlhbayardenda': 'pajak','id':'ttransaksi'})
+        )
+
+        for _, item in data.iterrows():
             alamat = item.get("objek_alamat", "")
             pajak = item.get("pajak", 0)
             kecamatan = ""
@@ -149,3 +183,5 @@ class Dtransaksi:
             for kec, val in dict(hasil).items()
         ])
      
+    def delAllTransaksi(self):
+        TransaksiPajak.objects.all().delete()

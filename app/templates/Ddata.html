@@ -51,7 +51,7 @@
             <td class="px-4 py-2">
                 ${v.bulan_huruf || ''} ${v.transaksi_periodepajak || ''}
             </td>
-            <td class="px-4 py-2">${v.transaksi_jmlhbayardenda || 0}</td>
+            <td class="px-4 py-2">${v.transaksi_jmlhbayardenda.toLocaleString("id-ID", { style: "currency", currency: "IDR" }) || 0}</td>
             <td class="px-4 py-2">
                 <button class="text-indigo-600 hover:underline" onclick="modalInfo(${i})">Detail</button></td>
             </tr>
@@ -76,7 +76,7 @@
     
   }
   function modalInfo(ind) {
-        console.log(_[ind]);4
+        console.log(_[ind]);
         
         runModal({
             judul:"Informasi",
@@ -90,8 +90,7 @@
                     </li>
                     <li class="p-3 hover:bg-blue-50 cursor-pointer">
                         <b style="display:block">Denda</b>
-                        ${transaksi_jmlhbayardenda}
-                        
+                        ${_[ind].transaksi_jmlhbayardenda.toLocaleString("id-ID", { style: "currency", currency: "IDR" })} 
                     </li>
                     </ul>
                 </div>

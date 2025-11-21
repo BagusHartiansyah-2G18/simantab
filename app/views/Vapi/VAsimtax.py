@@ -144,6 +144,22 @@ def simtax_get_transaksi(request):
         if items and isinstance(items, list):
             objects = []
             for item in items:
+                props = item.get('transaksi_propertis', {})
+
+                if isinstance(props, dict):
+                    omzet_makanan = safe_number(props.get('omzetmakanan', 0))
+                    omzet_minuman = safe_number(props.get('omzetminuman', 0))
+                elif isinstance(props, list):
+                    merged = {}
+                    for p in props:
+                        if isinstance(p, dict):
+                            merged.update(p)
+                    omzet_makanan = safe_number(merged.get('omzetmakanan', 0))
+                    omzet_minuman = safe_number(merged.get('omzetminuman', 0))
+                else:
+                    omzet_makanan = 0
+                    omzet_minuman = 0
+
                 obj = TransaksiPajak(
                     bulan=item['bulan'],
                     bulan_huruf=item['bulan_huruf'],
@@ -157,8 +173,8 @@ def simtax_get_transaksi(request):
                     pengguna_nama=item['pengguna_nama'],
                     subjenispajak_id=item['subjenispajak_id'],
                     subjenispajak_nama=item['subjenispajak_nama'],
-                    omzet_makanan=safe_number(item['transaksi_propertis']['omzetmakanan']),
-                    omzet_minuman=safe_number(item['transaksi_propertis']['omzetminuman']),
+                    omzet_makanan=omzet_makanan,
+                    omzet_minuman=omzet_minuman,
                     pajak=item['transaksi_jmlhpajak'],
                     status_bayar=(item['statusbayar'] == '1'),
                     tgl_bayar=datetime.strptime(item['tglbayar'], "%Y-%m-%d").date() if item['tglbayar'] else None,
@@ -174,9 +190,9 @@ def simtax_get_transaksi(request):
                     transaksi_periodepajak=item['transaksi_periodepajak'],
                     transaksi_tglawalreklame=item['transaksi_tglawalreklame'],
                     transaksi_tglakhirreklame=item['transaksi_tglakhirreklame'],
-                    transaksi_propertis=item['transaksi_propertis']
+                    transaksi_propertis=item.get('transaksi_propertis', {})
                 )
-                objects.append(obj)    
+                objects.append(obj)
                 
             TransaksiPajak.objects.bulk_create(objects)
             print("sukses menambahkan data baru!!!")
