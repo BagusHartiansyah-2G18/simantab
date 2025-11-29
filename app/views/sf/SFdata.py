@@ -95,11 +95,25 @@ class Dtransaksi:
         
     def pengusahaBerdenda(self):
         # peruser = self.dt.groupby('objek_id')['berdenda'].sum().reset_index()
+        # return (
+        #     self.dt[self.dt['transaksi_jmlhdendapembayaran'] > 0]
+        #     # self.dt
+        #     .groupby('objek_id')
+        #     .agg({
+        #         'transaksi_jmlhdendapembayaran': 'count',
+        #         'objek_nama': 'first',
+        #         'objek_alamat': 'first',
+        #         'pengguna_nama': 'first',
+        #     })
+        #     .reset_index()
+        #     .rename(columns={'transaksi_jmlhdendapembayaran': 'transaksi_jmlhbayardenda'})
+        # )
+
         return (
-            self.dt[self.dt['transaksi_jmlhdendapembayaran'] > 0]
-            .groupby('objek_id')
+            self.dt.groupby('objek_id')
             .agg({
-                'transaksi_jmlhdendapembayaran': 'count',
+                # hitung hanya baris dengan nilai > 0
+                'transaksi_jmlhdendapembayaran': lambda x: (x > 0).sum(),
                 'objek_nama': 'first',
                 'objek_alamat': 'first',
                 'pengguna_nama': 'first',
@@ -107,6 +121,7 @@ class Dtransaksi:
             .reset_index()
             .rename(columns={'transaksi_jmlhdendapembayaran': 'transaksi_jmlhbayardenda'})
         )
+
     
     def totalPajak(self):
         return self.dt['pajak'].sum()

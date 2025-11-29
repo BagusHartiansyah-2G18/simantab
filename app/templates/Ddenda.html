@@ -22,6 +22,7 @@
   function _tabel(dt) {
     const total = dt.reduce((sum, v) => sum + v.transaksi_jmlhbayardenda, 0);
     console.log(total);
+    // console.log(dt);
     
     const tableHTML = `
         <thead class="bg-indigo-600 text-white">
@@ -40,7 +41,7 @@
             <td class="px-4 py-2">${v.pengguna_nama|| '-'}</td>
             <td class="px-4 py-2">${v.objek_nama|| '-'}</td>
             <td class="px-4 py-2">${v.objek_alamat|| '-'}</td>
-            <td class="px-4 py-2">${v.transaksi_jmlhbayardenda?.toLocaleString() || '-'} Transaksi</td>
+            <td class="px-4 py-2">${(v.transaksi_jmlhbayardenda == "0"?"Taat Pajak":v.transaksi_jmlhbayardenda?.toLocaleString() +" Transaksi")} </td>
             </tr>
         `).join("")}
         </tbody>
