@@ -10,7 +10,7 @@
         createTabelForm(
             'form-wrapper',
             'search-table',
-            'Data Pengusaha Berdenda',
+            '{{judul}}',
             'Informasi Jumlah Transaksi Berdenda',
             'dendaPengusaha.xlsx',
             'dendaPengusaha.pdf'
@@ -22,7 +22,7 @@
   function _tabel(dt) {
     const total = dt.reduce((sum, v) => sum + v.transaksi_jmlhbayardenda, 0);
     console.log(total);
-    // console.log(dt);
+    console.log(dt);
     
     const tableHTML = `
         <thead class="bg-indigo-600 text-white">
@@ -31,7 +31,7 @@
             <th class="px-4 py-2">A.N</th>
             <th class="px-4 py-2">Nama Usaha</th>
             <th class="px-4 py-2">Alamat</th>
-            <th class="px-4 py-2">Berdenda</th>
+            <th class="px-4 py-2">Transaksi</th>
         </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">

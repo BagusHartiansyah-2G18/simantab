@@ -61,6 +61,9 @@ def dashboard(request):
 
     grafik_kec = grafik_plotly_express_duo(hasil, configKec)
     tot =  _.pengusaha()
+
+    taat = len(_.pengusahaTaat())
+    tidakTaat = len(_.pengusahaBerdenda())
     context = {
         'chart_pajak': chart_pajak,
         'chart_denda': chart_denda,
@@ -70,6 +73,8 @@ def dashboard(request):
         'tobjek': "{:,.0f}".format(len(tot)),
         'ttransaksi': "{:,.0f}".format(_.count()),
         "tgl":_.dataUpdate,
+        "taat":taat,
+        "tidakTaat":tidakTaat,
     }
     return render(request, 'dashboard.html', context)
 
@@ -119,6 +124,18 @@ def denda(request):
     data = dataFrameToJson(_.pengusahaBerdenda())
     context = {
         'data': data,
+        'judul':"Data Pengusaha Berdenda"
+    }
+    return render(request, 'Ddenda.html', context)
+
+
+@login_required
+def taat(request):
+    _ = Dtransaksi()
+    data = dataFrameToJson(_.pengusahaTaat())
+    context = {
+        'data': data,
+        'judul':"Data Pengusaha Taat Pajak"
     }
     return render(request, 'Ddenda.html', context)
 

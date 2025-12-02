@@ -93,7 +93,7 @@ class Dtransaksi:
         # objek_info = self.dt[['objek_id']].drop_duplicates()
         # return pd.merge(grouped, objek_info, on='objek_id', how='left')
         
-    def pengusahaBerdenda(self):
+    def totalTransaksiPengusaha(self):
         # peruser = self.dt.groupby('objek_id')['berdenda'].sum().reset_index()
         # return (
         #     self.dt[self.dt['transaksi_jmlhdendapembayaran'] > 0]
@@ -114,6 +114,51 @@ class Dtransaksi:
             .agg({
                 # hitung hanya baris dengan nilai > 0
                 'transaksi_jmlhdendapembayaran': lambda x: (x > 0).sum(),
+                'objek_nama': 'first',
+                'objek_alamat': 'first',
+                'pengguna_nama': 'first',
+            })
+            .reset_index()
+            .rename(columns={'transaksi_jmlhdendapembayaran': 'transaksi_jmlhbayardenda'})
+        )
+
+    def pengusahaBerdenda(self):
+        # Hitung total denda per objek
+        denda_objek = (
+            self.dt.groupby('objek_id')['transaksi_jmlhdendapembayaran'].sum()
+        )
+
+        # Ambil hanya objek yang total dendanya > 0
+        objek_tidak_taat = denda_objek[denda_objek > 0].index
+
+        # Filter berdasarkan objek tersebut
+        return (
+            self.dt[self.dt['objek_id'].isin(objek_tidak_taat)]
+            .groupby('objek_id')
+            .agg({
+                'transaksi_jmlhdendapembayaran': 'count',
+                'objek_nama': 'first',
+                'objek_alamat': 'first',
+                'pengguna_nama': 'first',
+            })
+            .reset_index()
+            .rename(columns={'transaksi_jmlhdendapembayaran': 'transaksi_jmlhbayardenda'})
+        )
+
+    def pengusahaTaat(self):
+        # Hitung total denda per objek
+        denda_objek = (
+            self.dt.groupby('objek_id')['transaksi_jmlhdendapembayaran'].sum()
+        )
+
+        # Objek yang benar-benar 100% tanpa denda
+        objek_taat = denda_objek[denda_objek == 0].index
+
+        return (
+            self.dt[self.dt['objek_id'].isin(objek_taat)]
+            .groupby('objek_id')
+            .agg({
+                'transaksi_jmlhdendapembayaran': 'count',
                 'objek_nama': 'first',
                 'objek_alamat': 'first',
                 'pengguna_nama': 'first',

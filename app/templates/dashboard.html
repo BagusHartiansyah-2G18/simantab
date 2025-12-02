@@ -38,26 +38,47 @@
   <h1 class="text-2xl font-bold mb-6">Selamat datang, {{ user.username }}</h1>
   <div class="grid grid-cols-3 gap-6">
     <div class="bg-white p-6 rounded shadow">
+      <a href="/data" class="">
       <h2 class="text-lg font-semibold">Total Belanja</h2>
       <p class="text-xl font-bold text-indigo-600">{{ total_omzet }}</p>
+      </a>
     </div>
     <div class="bg-white p-6 rounded shadow">
+      <a href="/wilaya" class="">
       <h2 class="text-lg font-semibold">Total Pajak</h2>
       <p class="text-xl text-gray-700">{{ total_pajak }}</p>
+      </a>
     </div>
     <div class="bg-white p-6 rounded shadow">
-      <h2 class="text-lg font-semibold">Total Pengusaha</h2>
-      <p class="text-xl text-gray-700">{{ tobjek }}</p>
+      <a href="/pengusaha" class="">
+          <h2 class="text-lg font-semibold">Total Pengusaha</h2>
+        <p class="text-xl text-gray-700">{{ tobjek }}</p>
+      </a>
     </div>
     <div class="bg-white p-6 rounded shadow">
+      <a href="/data" class="">
       <h2 class="text-lg font-semibold">Total Transaksi</h2>
       <p class="text-xl text-gray-700">{{ ttransaksi}}</p>
+      </a>
     </div>
     
-    
     <div class="bg-white p-6 rounded shadow">
-      <h2 class="text-lg font-semibold">Terakhir Update</h2>
-      <p class="text-sm text-gray-500">{{tgl}}</p>
+      <a href="/data" class="">
+        <h2 class="text-lg font-semibold">Terakhir Update</h2>
+        <p class="text-sm text-gray-500">{{tgl}}</p>
+      </a>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+      <a href="/taat" class="">
+      <h2 class="text-lg font-semibold">Taat Pajak </h2>
+      <p class="text-xl text-gray-700">{{ taat}}</p>
+      </a>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+      <a href="/denda" class="">
+      <h2 class="text-lg font-semibold">Tidak Taat</h2>
+      <p class="text-xl text-gray-700">{{ tidakTaat}}</p>
+      </a>
     </div>
   </div>
   <hr class="my-4 border-t border-gray-300" />
