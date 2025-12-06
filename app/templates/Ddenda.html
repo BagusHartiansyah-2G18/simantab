@@ -28,6 +28,7 @@
         <thead class="bg-indigo-600 text-white">
         <tr>
             <th class="px-4 py-2">No</th>
+            <th class="px-4 py-2">ID</th>
             <th class="px-4 py-2">A.N</th>
             <th class="px-4 py-2">Nama Usaha</th>
             <th class="px-4 py-2">Alamat</th>
@@ -38,6 +39,8 @@
         ${dt.map((v, i) => `
             <tr>
             <td class="px-4 py-2">${i + 1}</td>
+            <td class="px-4 py-2">${v.objek_id || '-'}</td>
+            
             <td class="px-4 py-2">${v.pengguna_nama|| '-'}</td>
             <td class="px-4 py-2">${v.objek_nama|| '-'}</td>
             <td class="px-4 py-2">${v.objek_alamat|| '-'}</td>
